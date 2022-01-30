@@ -117,8 +117,6 @@ class _EidtProductState extends State<EidtProduct> {
 
   @override
   Widget build(BuildContext context) {
-   
-
     _barcode.text = widget.barcode!;
     _name.text = widget.name!;
     _desc.text = widget.desc!;
@@ -154,7 +152,7 @@ class _EidtProductState extends State<EidtProduct> {
               color: Colors.grey[200],
               child: DropdownButton(
                 focusColor: Colors.grey[200],
-                value:_category,
+                value: _category,
                 elevation: 5,
                 style: TextStyle(color: Colors.grey[200]),
                 iconEnabledColor: Colors.black,
@@ -187,8 +185,6 @@ class _EidtProductState extends State<EidtProduct> {
                     _category = value;
                     print(_category);
                   });
-                 
-                  
                 },
                 // onChanged: (String value) {
 
@@ -225,16 +221,16 @@ class _EidtProductState extends State<EidtProduct> {
                 ),
               ),
             ),
-            TextButton(
-                onPressed: reImg == false
-                    ? null
-                    : () {
-                        setState(() {
-                          img = true;
-                          reImg = false;
-                        });
-                      },
-                child: Text("Refrash Image")),
+            // TextButton(
+            //     onPressed: reImg == false
+            //         ? null
+            //         : () {
+            //             setState(() {
+            //               img = true;
+            //               reImg = false;
+            //             });
+            //           },
+            //     child: Text("Refrash Image")),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: ElevatedButton(
