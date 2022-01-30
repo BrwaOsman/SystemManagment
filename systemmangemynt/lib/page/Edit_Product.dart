@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_final_fields, curly_braces_in_flow_control_structures, non_constant_identifier_names, avoid_print, unused_element
+// ignore_for_file: prefer_const_constructors, prefer_final_fields, curly_braces_in_flow_control_structures, non_constant_identifier_names, avoid_print, unused_element, prefer_const_literals_to_create_immutables
 
 import 'dart:io';
 
@@ -52,21 +52,8 @@ class _EidtProductState extends State<EidtProduct> {
   File? imageFile;
   String? ImageUrl;
   bool img = false;
-  bool reImg = false;
   bool _loading = false;
   String? _category;
-  void _onLoading() {
-    setState(() {
-      _loading = true;
-      new Future.delayed(new Duration(seconds: 3), _login);
-    });
-  }
-
-  Future _login() async {
-    setState(() {
-      _loading = false;
-    });
-  }
 
 // change dateTime to timestamp
   date(Timestamp timestamp, DateTime? Fdate) {
@@ -112,19 +99,19 @@ class _EidtProductState extends State<EidtProduct> {
     super.initState();
     setState(() {
       _stor.ImageUrl = null;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-   
-
-    _barcode.text = widget.barcode!;
+   _barcode.text = widget.barcode!;
     _name.text = widget.name!;
     _desc.text = widget.desc!;
     _quantity.text = "${widget.quantity}";
     _cost.text = "${widget.cost}";
     _price.text = "${widget.price}";
+
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+ 
 
     return Scaffold(
       appBar: AppBar(
@@ -154,7 +141,7 @@ class _EidtProductState extends State<EidtProduct> {
               color: Colors.grey[200],
               child: DropdownButton(
                 focusColor: Colors.grey[200],
-                value:_category,
+                value: _category,
                 elevation: 5,
                 style: TextStyle(color: Colors.grey[200]),
                 iconEnabledColor: Colors.black,
@@ -187,8 +174,6 @@ class _EidtProductState extends State<EidtProduct> {
                     _category = value;
                     print(_category);
                   });
-                 
-                  
                 },
                 // onChanged: (String value) {
 
@@ -206,10 +191,12 @@ class _EidtProductState extends State<EidtProduct> {
             InkWell(
               onTap: () {
                 _stor.getImage(imageFile);
-                _onLoading();
+            
                 setState(() {
-                  reImg = true;
+                  img = true;
                 });
+        
+                
               },
               child: Container(
                 // padding: EdgeInsets.all(10),
@@ -220,37 +207,42 @@ class _EidtProductState extends State<EidtProduct> {
                     color: Colors.grey[400],
                     borderRadius: BorderRadius.circular(15)),
                 child: Image.network(
-                  img == false ? "${widget.image}" : "${_stor.ImageUrl}",
+                  "${widget.image}" ,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            TextButton(
-                onPressed: reImg == false
-                    ? null
-                    : () {
-                        setState(() {
-                          img = true;
-                          reImg = false;
-                        });
-                      },
-                child: Text("Refrash Image")),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: ElevatedButton(
-                  onPressed: reImg == true
-                      ? null
-                      : () {
-                          Edit_data();
-                          print(_stor.ImageUrl);
-                          Navigator.pushNamed(context, '/');
-                        },
+                  onPressed: () async {
+                    if (_loading) return;
+                    setState(() => _loading = true);
+                    await Future.delayed(Duration(seconds: 5));
+                    setState(() => _loading = false);
+                    Edit_data();
+                    print(_stor.ImageUrl);
+                    Navigator.pushNamed(context, '/');
+                  },
                   style: ElevatedButton.styleFrom(
                       primary: Color.fromARGB(255, 39, 191, 181)),
-                  child: Text(
-                    "Edit Product",
-                    style: TextStyle(color: Colors.white),
-                  )),
+                  child: _loading == true
+                      ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                            SizedBox(
+                              width: 24,
+                            ),
+                            Text('Please waie ...')
+                          ],
+                        )
+                      : Text(
+                          "Edit Product",
+                          style: TextStyle(color: Colors.white),
+                        )),
             )
           ],
         ),
@@ -314,7 +306,7 @@ class _EidtProductState extends State<EidtProduct> {
     Product _product = Product(
         barcode: _barcode.value.text,
         name: _name.value.text,
-        category: _category,
+        category: _category == null ? widget.category: _category,
         desc: _desc.value.text,
         quantity: int.parse(_quantity.value.text),
         cost: int.parse(_cost.value.text),
