@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:systemmangemynt/model/product.dart';
 import 'package:systemmangemynt/server/_firestor.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class AddProudct extends StatefulWidget {
   const AddProudct({Key? key}) : super(key: key);
@@ -16,7 +17,8 @@ class AddProudct extends StatefulWidget {
 
 class _AddProudctState extends State<AddProudct> {
   String? _category;
-  TextEditingController _bardoe = TextEditingController();
+  String? barcode = '';
+  //TextEditingController _bardoe = TextEditingController();
   TextEditingController _name = TextEditingController();
   TextEditingController _desc = TextEditingController();
   TextEditingController _quantity = TextEditingController();
@@ -60,7 +62,6 @@ class _AddProudctState extends State<AddProudct> {
 
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       appBar: AppBar(
         title: Text("Add a New Product"),
@@ -72,12 +73,23 @@ class _AddProudctState extends State<AddProudct> {
           children: [
             Row(
               children: [
-                Expanded(child: TextFormFild("barcode", _bardoe, 0)),
+                Expanded(
+                    child: TextField(
+                  decoration: InputDecoration(hintText: barcode),
+                )),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Icon(
-                    Icons.qr_code,
-                    size: 50,
+                  child: IconButton(
+                    onPressed: () async {
+                      String barcodeScanRes =
+                          await FlutterBarcodeScanner.scanBarcode(
+                              "#ff6666", "Cancel", false, ScanMode.DEFAULT);
+                      print('=============> ${barcodeScanRes}');
+                      setState(() {
+                        barcode = barcodeScanRes;
+                      });
+                    },
+                    icon: Icon(Icons.qr_code),
                   ),
                 )
               ],
@@ -222,8 +234,6 @@ class _AddProudctState extends State<AddProudct> {
               fillColor: Colors.grey[200],
               filled: true,
               border: InputBorder.none),
-              
-          
         ),
       ),
     );
@@ -231,7 +241,7 @@ class _AddProudctState extends State<AddProudct> {
 
   Future add_data() async {
     Product _product = Product(
-        barcode: _bardoe.value.text,
+        barcode: barcode,
         name: _name.value.text,
         category: _category,
         desc: _desc.value.text,
